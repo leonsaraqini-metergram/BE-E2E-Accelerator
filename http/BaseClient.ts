@@ -44,57 +44,6 @@ class BaseClient {
     }
 
     /**
-     * Handles an Axios request to a specific route with a method and body.
-     * @param {string} route - The API route.
-     * @param {string} method - The HTTP method (e.g., 'post', 'put', 'get').
-     * @param {any} body - The request body (if applicable).
-     * @returns {Promise<AxiosResponse<T> | null>} A promise that resolves with the Axios response or null if an error occurs.
-     * @private
-     * @template T - The type of the response data.
-     */
-    private async handleRequestReturnList<T>(route: string, method: string, body: any): Promise<AxiosResponse<T> | null> {
-        const config: AxiosRequestConfig = {
-            url: route,
-            method: method,
-            headers: this.httpRequestHeaders,
-            data: body
-        };
-        return await this.handleRequest<T>(config);
-    }
-
-    /**
-     * Makes a POST request and returns the response.
-     * @param {string} route - The API route.
-     * @param {any} body - The request body.
-     * @returns {Promise<AxiosResponse<T> | null>} A promise that resolves with the Axios response or null if an error occurs.
-     * @template T - The type of the response data.
-     */
-    async postAndReturnListResponse<T>(route: string, body: any): Promise<AxiosResponse<T> | null> {
-        return await this.handleRequestReturnList<T>(route, 'post', body);
-    }
-
-    /**
-     * Makes a PUT request and returns the response.
-     * @param {string} route - The API route.
-     * @param {any} body - The request body.
-     * @returns {Promise<AxiosResponse<T> | null>} A promise that resolves with the Axios response or null if an error occurs.
-     * @template T - The type of the response data.
-     */
-    async putAndReturnListResponse<T>(route: string, body: any): Promise<AxiosResponse<T> | null> {
-        return await this.handleRequestReturnList<T>(route, 'put', body);
-    }
-
-    /**
-     * Makes a GET request and returns the response.
-     * @param {string} route - The API route.
-     * @returns {Promise<AxiosResponse<T> | null>} A promise that resolves with the Axios response or null if an error occurs.
-     * @template T - The type of the response data.
-     */
-    async getAllReturnListResponse<T>(route: string): Promise<AxiosResponse<T> | null> {
-        return await this.handleRequestReturnList<T>(route, 'get', null);
-    }
-
-    /**
      * Makes a POST request to a specific route.
      * @param {string} route - The API route.
      * @param {any} body - The request body.
@@ -126,22 +75,7 @@ class BaseClient {
         return await this.handleRequest<T>(config);
     }
 
-    /**
-     * Makes a DELETE request to a specific route.
-     * @param {string} route - The API route.
-     * @param {any} [body] - Optional request body.
-     * @returns {Promise<AxiosResponse<T> | null>} A promise that resolves with the Axios response or null if an error occurs.
-     * @template T - The type of the response data.
-     */
-    async delete<T>(route: string, body?: any): Promise<AxiosResponse<T> | null> {
-        const config: AxiosRequestConfig = {
-            url: this.baseUrl + route,
-            method: 'delete',
-            headers: this.httpRequestHeaders,
-            data: body
-        };
-        return await this.handleRequest<T>(config);
-    }
+
     /**
      * Adds a custom header to be used in HTTP requests.
      * @param {string} key - The header name.

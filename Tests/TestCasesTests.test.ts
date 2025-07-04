@@ -1,34 +1,31 @@
-import { GetUserResponseBody } from '../model/get/GetUserResponseBody';
 import { MetergramClient } from "../http/MetergramClient";
 import {describe, expect, test} from '@jest/globals';
 
-
-describe('TestCasesTests', () => {
+describe('TestCases', () => {
     let metergramClient: MetergramClient;
 
-    beforeEach(() => {
+    beforeAll(async () => {
         metergramClient = new MetergramClient();
     });
 
-    test('GetUserByID', async () => {
-        const responseEntity = await metergramClient.getUserById(3);
-        const user: GetUserResponseBody = responseEntity.data;
-        expect(user.data.id).toEqual(3)
-        expect(user.data.email).toEqual("emma.wong@reqres.in")
+
+    test('GetProduct1', async () => {
+        const id = 1
+        const responseEntity = await metergramClient.getProductById(id)
+        expect(responseEntity.status).toEqual(200)
+        expect(responseEntity.data.id).toEqual(id)
+        expect(responseEntity.data.tags[1]).toEqual("mascara")
     });
 
-    test ('GetUserByIDFail', async () => {
-        const responseEntity = await metergramClient.getUserById(1);
-        const user: GetUserResponseBody = responseEntity.data;
-        expect(user.data.id).toEqual(1)
-        expect(user.data.email).toEqual("george.bluth@reqres.in")
+    test('GetAllRecipes', async () => {
+        const id = 9
+        const responseEntity = await metergramClient.getRecipes()
+        expect(responseEntity.status).toEqual(200)
+        expect(responseEntity.data.recipes[id].id).toEqual(id + 1)
     });
 
-    test('NotFoundError', async () => {
-        const responseEntity = await metergramClient.getUserById(23);
-        const status: GetUserResponseBody = responseEntity.status;
-        const statusText: GetUserResponseBody = responseEntity.statusText
-        expect(statusText).toEqual('Not Found');
-        expect(status).toEqual(404)
+    test('GetLimitedProductNumber', async () => {
+        const responseEntity = await metergramClient.getProductsWithLimit(10,10,"title")
+        expect(responseEntity.status).toEqual(200)
     });
 });
