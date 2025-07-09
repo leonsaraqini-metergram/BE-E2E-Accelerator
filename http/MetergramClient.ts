@@ -3,9 +3,16 @@ import { ResponseEntity } from "express";
 import { getConfig } from "../util/Config";
 import {PostAuthRequestBody} from "../model/auth/PostAuthRequestBody";
 import {PostAuthResponseBody} from "../model/auth/PostAuthResponseBody";
-import {ProductModel} from "../model/get/GetProductResponseBody";
-import {RecipeResponse} from "../model/get/GetRecipie";
-
+import { UserProfileResponse } from "../model/user/PostUserResponseBody";
+import { UserProfileRequest, UserProfileSchema } from "../model/user/PostUserRequestBody";
+import { ProductResponse } from "../model/product/get/GetProductResponseBody";
+import { ProductListResponse } from "../model/product/get/GetProductsResponseBody";
+import { ProductCreateRequest, ProductRequestSchema } from "../model/product/post/PostProductRequestBody";
+import { ProductPutResponse } from "../model/product/put/PutProductResponseBody";
+import { ProductPatchResponse } from "../model/product/patch/PatchProductResponseBody";
+import { ProductPutRequest } from "../model/product/put/PutProductRequestBody";
+import { ProductPatchRequest, ProductPatchSchema } from "../model/product/patch/PatchProductRequestBody";
+import { ProductDeleteRespone } from "../model/product/delete/DeleteProductResponseBody";
 /**
  * Extends BaseClient to provide additional functionality for interacting with the Metergram API.
  */
@@ -25,24 +32,52 @@ export class MetergramClient extends BaseClient {
      constructor() {
         super();
         const config = getConfig();
-        this.baseUrl = config.HOSTNAMEAPI;
     }
 
-    /**
-     * Fetches user details by user ID.
-     * @param {number} id - The ID of the user to fetch.
-     * @returns {ResponseEntity<GetUserResponseBody>} The response entity containing the user details.
-     */
-    public getProductById(id: number): ResponseEntity<ProductModel> {
+    public createUser(userInput: unknown): ResponseEntity<UserProfileResponse>{
+        const user : UserProfileRequest = UserProfileSchema.parse(userInput);
+
+        return this.post(`user/add`, user);
+    }
+
+    public getProductById(id: number): ResponseEntity<ProductResponse> {
         return this.get("products/" + id);
     }
 
-    public getRecipes(): ResponseEntity<RecipeResponse> {
-        return this.get("recipes");
+    public getProductByCategory(category: string): ResponseEntity<ProductListResponse>{
+        return this.get(`products/category/${category}`);
     }
 
-    public getProductsWithLimit(limit: number, skip: number, title: string): ResponseEntity<RecipeResponse> {
-        return this.get(`products?limit=${limit}&skip=${skip}&select=${title}`);
+    public getProductBySelect(limit: number, skip: number, selectArray: Array<String>): ResponseEntity<ProductListResponse>{
+        const select = selectArray.join(',');
+
+        return this.get(`products?limit=${limit}&skip=${skip}&select=${select}`);
+    }
+
+    public createProduct(productInput: unknown): ResponseEntity<ProductResponse>{
+        const product : ProductCreateRequest = ProductRequestSchema.parse(productInput);
+
+        return this.post(`products/add`, product);
+    }
+
+    public updateProductPut(id : number, productInput: unknown): ResponseEntity<ProductPutResponse>{
+        const product : ProductPutRequest = ProductRequestSchema.parse(productInput);
+        
+        return this.put(`products/${id}`, product);
+    }
+
+    public updateProductPatch(id : number, productInput: unknown): ResponseEntity<ProductPatchResponse>{
+        const product : ProductPatchRequest = ProductPatchSchema.parse(productInput);
+        
+        return this.patch(`products/${id}`, product);
+    }
+
+    public deleteProduct(id: number): ResponseEntity<ProductDeleteRespone>{
+        return this.delete(`products/${id}`);
+    }
+
+    public getToken() : string{
+        return this.Token;
     }
 
     public async init(): Promise<void> {

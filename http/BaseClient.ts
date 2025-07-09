@@ -23,6 +23,7 @@ class BaseClient {
         });
     }
 
+
     /**
      * Handles an Axios request with the provided configuration.
      * @param {AxiosRequestConfig} config - The Axios request configuration.
@@ -74,7 +75,36 @@ class BaseClient {
         };
         return await this.handleRequest<T>(config);
     }
+    
+    async patch<T>(route: string, body: any): Promise<AxiosResponse<T> | null> {
+        const config: AxiosRequestConfig = {
+            url: this.baseUrl + route,
+            method: 'patch',
+            headers: this.httpRequestHeaders,
+            data: body
+        };
+        return await this.handleRequest<T>(config);
+    }
 
+
+    async put<T>(route: string, body: any): Promise<AxiosResponse<T> | null> {
+        const config: AxiosRequestConfig = {
+            url: this.baseUrl + route,
+            method: 'put',
+            headers: this.httpRequestHeaders,
+            data: body
+        };
+        return await this.handleRequest<T>(config);
+    }
+
+    async delete<T>(route: string): Promise<AxiosResponse<T> | null> {
+        const config: AxiosRequestConfig = {
+            url: this.baseUrl + route,
+            method: 'delete',
+            headers: this.httpRequestHeaders
+        };
+        return await this.handleRequest<T>(config);
+    }
 
     /**
      * Adds a custom header to be used in HTTP requests.
@@ -83,6 +113,13 @@ class BaseClient {
      */
     addHeader(key: string, value: string): void {
         this.httpRequestHeaders[key] = value;
+    }
+
+    public getAuthHeader() : string{
+        const authHeader = this.httpRequestHeaders.Authorization;
+        const token = authHeader.split("Bearer ")[1];
+        
+        return token;
     }
 }
 
